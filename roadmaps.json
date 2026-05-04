@@ -1,0 +1,11 @@
+{
+  "backend": {
+    "title": "Engenharia de Back-end",
+    "description": "Foco em sistemas escaláveis, segurança e integridade de dados.",
+    "steps": [
+      { "level": "base", "topics": ["Lógica Avançada", "Estrutura de Dados", "Redes"] },
+      { "level": "language", "topics": ["Java (Spring)" , "Rust (Systems)"] },
+      { "level": "architecture", "topics": ["Clean Architecture", "SQL/NoSQL", "Docker"] }
+    ]
+  }
+}
