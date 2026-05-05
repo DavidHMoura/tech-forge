@@ -1,0 +1,10 @@
+{
+  "general": {
+    "status_2026": "O mercado de 'quem só sabe framework' colapsou. IAs escrevem código básico melhor e mais rápido que qualquer iniciante.",
+    "requirement": "A senioridade agora é medida pelo domínio dos fundamentos. Se você não sabe o que acontece por baixo do capô, você é descartável."
+  },
+  "security_alert": {
+    "title": "A Barreira da Cibersegurança",
+    "message": "Ninguém começa em segurança sem saber redes e infraestrutura. Tentar pular essa etapa é como tentar ser cirurgião sem estudar anatomia."
+  }
+}

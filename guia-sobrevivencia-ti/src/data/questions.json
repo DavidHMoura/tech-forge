@@ -1,0 +1,250 @@
+[
+  {
+    "id": "q1",
+    "type": "technical_base",
+    "question": "Dois computadores na mesma rede local se comunicam. Qual identificador é usado para a entrega local dos pacotes, antes de qualquer roteamento?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Endereço IP de destino",
+        "correct": false,
+        "insight": "O IP é usado para roteamento entre redes, mas na mesma rede local quem faz a entrega é o endereço MAC via protocolo ARP."
+      },
+      {
+        "id": "b",
+        "text": "Endereço MAC resolvido via ARP",
+        "correct": true,
+        "insight": "Na camada de Enlace (L2), o ARP resolve o IP para o MAC físico. Sem isso, o pacote nunca sai da placa de rede."
+      },
+      {
+        "id": "c",
+        "text": "Porta TCP de destino",
+        "correct": false,
+        "insight": "Portas TCP operam na camada de Transporte (L4), não na entrega local entre hosts da mesma rede."
+      },
+      {
+        "id": "d",
+        "text": "Nome DNS do host",
+        "correct": false,
+        "insight": "DNS é resolução de nomes, não entrega de pacotes. DNS acontece antes de tudo; IP e MAC resolvem a entrega."
+      }
+    ]
+  },
+  {
+    "id": "q2",
+    "type": "technical_base",
+    "question": "Um processo em userspace chama `malloc(1GB)`. O que o kernel Linux faz imediatamente após essa chamada?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Aloca 1GB de RAM física imediatamente",
+        "correct": false,
+        "insight": "Isso seria 'eager allocation'. O Linux usa alocação preguiçosa — reserva espaço virtual, mas não toca a RAM física até o primeiro acesso (page fault)."
+      },
+      {
+        "id": "b",
+        "text": "Reserva 1GB no espaço de endereços virtual, sem tocar RAM física ainda",
+        "correct": true,
+        "insight": "O kernel usa memória virtual com overcommit. Páginas físicas só são alocadas quando o processo escreve nelas pela primeira vez (demand paging via page fault)."
+      },
+      {
+        "id": "c",
+        "text": "Retorna erro: processo comum não pode alocar tanto",
+        "correct": false,
+        "insight": "O Linux por padrão permite overcommit. O OOM killer só age quando você realmente usa a memória e não há RAM disponível."
+      },
+      {
+        "id": "d",
+        "text": "Cria um arquivo swap imediatamente para guardar os dados",
+        "correct": false,
+        "insight": "Swap é usado quando páginas precisam ser descarregadas da RAM, não na alocação inicial. A alocação começa no espaço virtual."
+      }
+    ]
+  },
+  {
+    "id": "q3",
+    "type": "technical_base",
+    "question": "Você digita 'https://github.com' no navegador e aperta Enter. Qual é a sequência correta dos primeiros eventos?",
+    "options": [
+      {
+        "id": "a",
+        "text": "TCP Handshake → DNS → TLS → HTTP GET",
+        "correct": false,
+        "insight": "Você precisa saber o IP antes de abrir qualquer conexão TCP. Sem DNS, não há como endereçar o servidor remotamente."
+      },
+      {
+        "id": "b",
+        "text": "DNS → TCP Handshake → TLS Handshake → HTTP GET",
+        "correct": true,
+        "insight": "Primeiro resolve o nome (DNS), depois abre a conexão (TCP SYN/SYN-ACK/ACK), depois negocia criptografia (TLS), só então envia o HTTP GET."
+      },
+      {
+        "id": "c",
+        "text": "HTTP GET → DNS → TCP → TLS",
+        "correct": false,
+        "insight": "HTTP é camada de aplicação — ela só existe depois que as camadas de transporte e segurança estão estabelecidas."
+      },
+      {
+        "id": "d",
+        "text": "TLS → DNS → TCP Handshake → HTTP GET",
+        "correct": false,
+        "insight": "TLS opera sobre TCP. Você precisa de uma conexão TCP ativa antes de negociar qualquer criptografia."
+      }
+    ]
+  },
+  {
+    "id": "q4",
+    "type": "technical_base",
+    "question": "Internamente, o que o Git armazena quando você executa `git commit`?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Um diff (patch) das mudanças em relação ao commit anterior",
+        "correct": false,
+        "insight": "Ideia comum, mas errada. Git armazena snapshots completos. O histórico de diffs é calculado sob demanda para exibição, não armazenado."
+      },
+      {
+        "id": "b",
+        "text": "Um objeto 'commit' com SHA-1 apontando para um objeto 'tree' (snapshot do diretório)",
+        "correct": true,
+        "insight": "Git é um content-addressable store. Um commit aponta para uma tree (snapshot), que aponta para blobs (arquivos). Tudo identificado por SHA-1."
+      },
+      {
+        "id": "c",
+        "text": "Uma cópia comprimida de todos os arquivos do projeto em ZIP",
+        "correct": false,
+        "insight": "Git armazena objetos individuais em .git/objects/, não ZIPs. Arquivos idênticos entre commits compartilham o mesmo blob."
+      },
+      {
+        "id": "d",
+        "text": "Apenas os metadados (autor, data, mensagem), sem o conteúdo dos arquivos",
+        "correct": false,
+        "insight": "Metadados fazem parte do objeto commit, mas ele também referencia a tree com o snapshot completo dos arquivos."
+      }
+    ]
+  },
+  {
+    "id": "q5",
+    "type": "technical_base",
+    "question": "Por que acessar um dado no cache L1 da CPU é ~200x mais rápido do que acessar da RAM?",
+    "options": [
+      {
+        "id": "a",
+        "text": "O L1 usa SSD NVMe integrado, que é mais rápido que a RAM DDR5",
+        "correct": false,
+        "insight": "SSD é armazenamento persistente — ordens de magnitude mais lento que RAM. L1 é SRAM integrada diretamente no die da CPU."
+      },
+      {
+        "id": "b",
+        "text": "O L1 é SRAM no chip da CPU (~1ns de latência) vs DRAM externa (~100ns)",
+        "correct": true,
+        "insight": "SRAM não precisa de refresh, opera na frequência da CPU e está fisicamente dentro do chip. DRAM é mais densa e barata, mas com latência muito maior."
+      },
+      {
+        "id": "c",
+        "text": "O L1 tem maior capacidade, então encontra os dados mais rápido",
+        "correct": false,
+        "insight": "L1 tem capacidade mínima (32-64 KB vs GBs de RAM). A velocidade vem da proximidade física e do tipo de tecnologia (SRAM vs DRAM)."
+      },
+      {
+        "id": "d",
+        "text": "O SO prioriza dados no L1 via algoritmo de escalonamento",
+        "correct": false,
+        "insight": "O gerenciamento do cache é feito em hardware pelo controlador de cache da CPU. O SO gerencia memória virtual, não o cache L1/L2/L3."
+      }
+    ]
+  },
+  {
+    "id": "p1",
+    "type": "profile",
+    "question": "Você trava num bug impossível há 3 horas. Sem Stack Overflow, sem colega disponível. O que você faz?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Desisto por hoje e retomo amanhã com a cabeça mais fria",
+        "correct": false,
+        "insight": "Descanso tem valor, mas sem estratégia. Seniores isolam o problema, criam casos mínimos reproduzíveis e leem o código-fonte das dependências."
+      },
+      {
+        "id": "b",
+        "text": "Reduzo ao mínimo reproduzível e leio o código-fonte da dependência suspeita",
+        "correct": true,
+        "insight": "Essa é a mentalidade de quem resolve problemas de verdade. Quando não há resposta pronta, você vai à fonte: o código que está falhando."
+      },
+      {
+        "id": "c",
+        "text": "Abro um issue no GitHub do projeto e aguardo resposta",
+        "correct": false,
+        "insight": "Issues são válidos, mas depender de terceiros para se desbloquear indica falta de autonomia investigativa — das mais valorizadas em 2026."
+      },
+      {
+        "id": "d",
+        "text": "Reescrevo a parte do código de outra forma, contornando o problema",
+        "correct": false,
+        "insight": "Workarounds sem entender a causa raiz criam dívida técnica. O bug vai voltar, mais difícil de rastrear."
+      }
+    ]
+  },
+  {
+    "id": "p2",
+    "type": "profile",
+    "question": "Um sênior destrói seu PR em code review: 'Isso se resolve em uma linha de Rust, não 40 de Python.' Como você reage?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Defendo minha solução: Python é mais legível e o time não conhece Rust",
+        "correct": false,
+        "insight": "Defender sem investigar é ego, não argumento. Seniores valorizam quem considera a crítica antes de responder."
+      },
+      {
+        "id": "b",
+        "text": "Peço para ele mostrar a solução em Rust e avalio se é superior no contexto",
+        "correct": true,
+        "insight": "Curiosidade técnica + abertura para aprender + pragmatismo para avaliar o contexto. Isso é maturidade de engenharia."
+      },
+      {
+        "id": "c",
+        "text": "Aceito sem questionar e reescrevo em Rust mesmo sem entender bem a linguagem",
+        "correct": false,
+        "insight": "Capitular sem entender é tão ruim quanto defender sem razão. Você precisa entender o porquê de uma decisão técnica."
+      },
+      {
+        "id": "d",
+        "text": "Escalo para o tech lead para resolver o conflito",
+        "correct": false,
+        "insight": "Escalação prematura sem tentar resolver é sinal de baixa maturidade para lidar com conflito técnico — rotina no dia a dia de engenharia."
+      }
+    ]
+  },
+  {
+    "id": "p3",
+    "type": "profile",
+    "question": "Você precisa dominar Kubernetes em 2 semanas para uma tarefa crítica. Qual é sua abordagem?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Assisto uma playlist completa de 20 horas no YouTube sobre Kubernetes",
+        "correct": false,
+        "insight": "Conteúdo passivo tem valor limitado. Em 2 semanas, você precisa de aprendizado ativo: rodar, errar e debugar em ambiente real."
+      },
+      {
+        "id": "b",
+        "text": "Leio a documentação oficial, subo um cluster local (kind/minikube) e quebro coisas de propósito para entender",
+        "correct": true,
+        "insight": "Documentação oficial + prática deliberada + erros intencionais = aprendizado que fica. Isso diferencia quem aprende de quem apenas assiste."
+      },
+      {
+        "id": "c",
+        "text": "Peço mais prazo, pois 2 semanas não é tempo suficiente",
+        "correct": false,
+        "insight": "Negociar prazo é válido, mas sem antes tentar estruturar o aprendizado demonstra falta de proatividade."
+      },
+      {
+        "id": "d",
+        "text": "Uso IA para gerar os manifests YAML e vou aprendendo na prática do projeto",
+        "correct": false,
+        "insight": "IA como ferramenta é válido, mas sem fundamentos você não consegue debugar quando os manifests falham — e eles vão falhar."
+      }
+    ]
+  }
+]

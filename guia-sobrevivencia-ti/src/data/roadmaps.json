@@ -1,0 +1,11 @@
+{
+  "foundation_required": {
+    "title": "Nível 0: A Base de Ferro",
+    "topics": ["Arquitetura de Computadores", "Sistemas Operacionais (Linux)", "Redes (TCP/IP)", "Lógica e Algoritmos"],
+    "min_score": 80
+  },
+  "paths": {
+    "backend": { "focus": ["Sistemas Distribuídos", "Concorrência", "Rust/Java", "SQL Avançado"] },
+    "security": { "focus": ["Pentest", "AppSec", "Criptografia", "Defesa de Redes"] }
+  }
+}
