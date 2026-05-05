@@ -1,8 +1,17 @@
 export type QuestionType = 'technical_base' | 'profile'
 
-export type RoadmapPath = 'backend' | 'security'
+export type RoadmapPath = 'backend' | 'security' | 'frontend'
 
-export type QuizPhase = 'quiz' | 'path_selection' | 'result'
+export type QuizMode = 'direto' | 'bussola'
+
+// Cada valor representa uma tela distinta no fluxo
+export type AppPhase =
+  | 'home'
+  | 'explore'
+  | 'pre_path_select'   // direto: usuário escolhe trilha ANTES do quiz
+  | 'quiz'
+  | 'post_path_select'  // bussola: usuário escolhe trilha APÓS o quiz
+  | 'result'
 
 export interface Option {
   id: string
@@ -19,8 +28,8 @@ export interface Question {
 }
 
 export interface UserStats {
-  infraScore: number       // 0-100, baseado nas perguntas technical_base
-  resilienceScore: number  // 0-100, baseado nas perguntas profile
+  infraScore: number       // 0–100, perguntas technical_base
+  resilienceScore: number  // 0–100, perguntas profile
   forcedFoundation: boolean
   chosenPath: RoadmapPath
 }

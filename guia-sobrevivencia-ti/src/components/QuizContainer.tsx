@@ -1,11 +1,11 @@
 import { useState, useCallback } from 'react'
-import { useQuiz } from '../hooks/useQuiz'
-import type { Option, AnswerFeedback, UserStats, RoadmapModule } from '../types'
+import type { UseQuizReturn } from '../hooks/useQuiz'
+import type { Option, AnswerFeedback, UserStats, RoadmapModule, RoadmapPath } from '../types'
 
 // ─── ProgressBar ──────────────────────────────────────────────────────────────
 
 function ProgressBar({ current, total }: { current: number; total: number }) {
-  const pct = Math.round((current / total) * 100)
+  const pct = total > 0 ? Math.round((current / total) * 100) : 0
   return (
     <div className="w-full h-0.5 bg-zinc-800 rounded-full overflow-hidden">
       <div
@@ -104,30 +104,44 @@ const PATH_OPTIONS = [
     label: 'Cibersegurança',
     desc: 'Pentest, AppSec, Criptografia, Defesa de Redes',
   },
+  {
+    path: 'frontend' as const,
+    icon: '~[]',
+    label: 'Frontend',
+    desc: 'JavaScript Profundo, Performance Web, TypeScript',
+  },
 ]
 
-function PathSelection({ onSelect }: { onSelect: (path: 'backend' | 'security') => void }) {
+function PathSelection({
+  title,
+  subtitle,
+  onSelect,
+}: {
+  title: string
+  subtitle: string
+  onSelect: (path: RoadmapPath) => void
+}) {
   return (
-    <div className="space-y-6 text-center">
-      <div>
+    <div className="space-y-6">
+      <div className="text-center">
         <p className="text-cyan-400 font-mono text-xs uppercase tracking-widest mb-2">
-          Fase técnica concluída
+          Escolha sua trilha
         </p>
-        <h2 className="text-xl font-bold text-zinc-100">Qual trilha você quer seguir?</h2>
-        <p className="text-zinc-500 text-sm mt-1.5">
-          Seu roadmap será montado com base nos seus resultados.
-        </p>
+        <h2 className="text-xl font-bold text-zinc-100">{title}</h2>
+        <p className="text-zinc-500 text-sm mt-1.5 leading-relaxed">{subtitle}</p>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="space-y-2">
         {PATH_OPTIONS.map(({ path, icon, label, desc }) => (
           <button
             key={path}
             onClick={() => onSelect(path)}
-            className="p-4 rounded-xl border border-zinc-700 hover:border-cyan-500/60 hover:bg-zinc-800/40 transition-all duration-200 text-left"
+            className="w-full p-4 rounded-xl border border-zinc-700 hover:border-cyan-500/60 hover:bg-zinc-800/40 transition-all duration-200 text-left flex items-center gap-4"
           >
-            <p className="text-cyan-400 font-mono text-xl mb-2">{icon}</p>
-            <p className="text-zinc-100 font-semibold text-sm">{label}</p>
-            <p className="text-zinc-500 text-xs mt-1 leading-relaxed">{desc}</p>
+            <span className="text-cyan-400 font-mono text-xl shrink-0 w-10 text-center">{icon}</span>
+            <div>
+              <p className="text-zinc-100 font-semibold text-sm">{label}</p>
+              <p className="text-zinc-500 text-xs mt-0.5 leading-relaxed">{desc}</p>
+            </div>
           </button>
         ))}
       </div>
@@ -177,7 +191,7 @@ function DiagnosisResult({
         </div>
       </div>
 
-      {/* Golden Rule alert */}
+      {/* Regra de Ouro */}
       {stats.forcedFoundation && (
         <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/5">
           <p className="text-amber-400 text-xs font-mono font-bold mb-1">⚠ REGRA DE OURO ATIVADA</p>
@@ -189,7 +203,7 @@ function DiagnosisResult({
         </div>
       )}
 
-      {/* Roadmap modules */}
+      {/* Módulos do roadmap */}
       <div className="space-y-3">
         {roadmap.map((module, i) => (
           <div
@@ -204,11 +218,7 @@ function DiagnosisResult({
               {module.forced && (
                 <span className="text-amber-500 font-mono text-xs font-bold">[OBRIGATÓRIO]</span>
               )}
-              <h3
-                className={`font-bold text-sm ${
-                  module.forced ? 'text-amber-300' : 'text-cyan-300'
-                }`}
-              >
+              <h3 className={`font-bold text-sm ${module.forced ? 'text-amber-300' : 'text-cyan-300'}`}>
                 {module.title}
               </h3>
             </div>
@@ -236,20 +246,25 @@ function DiagnosisResult({
 
 // ─── QuizContainer ────────────────────────────────────────────────────────────
 
-export default function QuizContainer() {
+export default function QuizContainer({ quiz }: { quiz: UseQuizReturn }) {
   const {
-    phase,
+    appPhase,
     currentQuestion,
     questionIndex,
-    totalQuestions,
+    totalInSegment,
+    segmentIndex,
+    totalSegments,
+    segmentLabel,
+    isLastQuestion,
     feedback,
     stats,
     roadmap,
     answerQuestion,
     advance,
-    confirmPath,
-    reset,
-  } = useQuiz()
+    confirmPrePath,
+    confirmPostPath,
+    goHome,
+  } = quiz
 
   const [visible, setVisible] = useState(true)
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
@@ -263,7 +278,7 @@ export default function QuizContainer() {
     [feedback, answerQuestion],
   )
 
-  // Fade out → troca pergunta → fade in
+  // Fade out → avança → fade in
   const handleAdvance = useCallback(() => {
     setVisible(false)
     setTimeout(() => {
@@ -276,36 +291,62 @@ export default function QuizContainer() {
   const handleReset = useCallback(() => {
     setSelectedOption(null)
     setVisible(true)
-    reset()
-  }, [reset])
+    goHome()
+  }, [goHome])
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
 
-        {/* Brand header */}
-        <p className="text-center text-zinc-700 font-mono text-xs tracking-widest uppercase mb-8">
-          Tech-Forge / Diagnóstico
-        </p>
+        {/* Header com botão home */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={handleReset}
+            className="text-zinc-700 hover:text-zinc-500 font-mono text-xs transition-colors"
+          >
+            ← Início
+          </button>
+          <p className="text-zinc-700 font-mono text-xs tracking-widest uppercase">
+            Tech-Forge / Diagnóstico
+          </p>
+        </div>
 
-        {/* ── Quiz Phase ── */}
-        {phase === 'quiz' && currentQuestion && (
+        {/* ── Pré-seleção de trilha (direto) ── */}
+        {appPhase === 'pre_path_select' && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <PathSelection
+              title="Qual trilha você quer seguir?"
+              subtitle="Você passará pela Base Técnica antes de receber seu roadmap."
+              onSelect={confirmPrePath}
+            />
+          </div>
+        )}
+
+        {/* ── Quiz ── */}
+        {appPhase === 'quiz' && currentQuestion && (
           <>
+            {/* Meta do progresso */}
             <div className="flex items-center justify-between mb-3">
               <span className="text-zinc-600 font-mono text-xs">
-                {questionIndex + 1} / {totalQuestions}
+                {questionIndex + 1}/{totalInSegment}
+                {totalSegments > 1 && (
+                  <span className="text-zinc-700 ml-2">
+                    · parte {segmentIndex + 1}/{totalSegments}
+                  </span>
+                )}
               </span>
               <span
                 className={`font-mono text-xs uppercase tracking-wider ${
                   currentQuestion.type === 'technical_base' ? 'text-cyan-700' : 'text-violet-700'
                 }`}
               >
-                {currentQuestion.type === 'technical_base' ? 'Base Técnica' : 'Perfil'}
+                {segmentLabel}
               </span>
             </div>
 
-            <ProgressBar current={questionIndex + 1} total={totalQuestions} />
+            <ProgressBar current={questionIndex + 1} total={totalInSegment} />
 
+            {/* Card com transição */}
             <div
               className={`mt-5 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 transition-all duration-300 ease-in-out ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
@@ -331,7 +372,7 @@ export default function QuizContainer() {
               {feedback && (
                 <InsightPanel
                   feedback={feedback}
-                  isLast={questionIndex === totalQuestions - 1}
+                  isLast={isLastQuestion}
                   onContinue={handleAdvance}
                 />
               )}
@@ -339,15 +380,19 @@ export default function QuizContainer() {
           </>
         )}
 
-        {/* ── Path Selection Phase ── */}
-        {phase === 'path_selection' && (
+        {/* ── Pós-seleção de trilha (bussola) ── */}
+        {appPhase === 'post_path_select' && (
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-            <PathSelection onSelect={confirmPath} />
+            <PathSelection
+              title="Com base no diagnóstico, qual trilha faz mais sentido?"
+              subtitle="Seus scores de base e resiliência estão calculados. Escolha para onde seguir."
+              onSelect={confirmPostPath}
+            />
           </div>
         )}
 
-        {/* ── Result Phase ── */}
-        {phase === 'result' && stats && roadmap && (
+        {/* ── Resultado ── */}
+        {appPhase === 'result' && stats && roadmap && (
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
             <DiagnosisResult stats={stats} roadmap={roadmap} onReset={handleReset} />
           </div>

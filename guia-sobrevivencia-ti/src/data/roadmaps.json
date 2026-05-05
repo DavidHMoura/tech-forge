@@ -5,7 +5,8 @@
     "min_score": 80
   },
   "paths": {
-    "backend": { "focus": ["Sistemas Distribuídos", "Concorrência", "Rust/Java", "SQL Avançado"] },
-    "security": { "focus": ["Pentest", "AppSec", "Criptografia", "Defesa de Redes"] }
+    "backend":  { "focus": ["Sistemas Distribuídos", "Concorrência", "Rust/Java", "SQL Avançado"] },
+    "security": { "focus": ["Pentest", "AppSec", "Criptografia", "Defesa de Redes"] },
+    "frontend": { "focus": ["JavaScript Profundo", "Performance Web", "Acessibilidade", "TypeScript Avançado"] }
   }
 }
